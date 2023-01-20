@@ -1,6 +1,9 @@
 locals {
-  enabled = module.this.enabled
-  name    = var.fifo_queue_enabled ? format("%s.fifo", module.this.id) : module.this.id
+  enabled                 = module.this.enabled
+  prebuilt_policy_enabled = local.enabled && var.prebuilt_policy.enabled
+  name                    = var.fifo_queue_enabled ? format("%s.fifo", module.this.id) : module.this.id
+  sqs_queue_arn           = one(aws_sqs_queue.default[*].arn)
+  sqs_queue_url           = one(aws_sqs_queue.default[*].url)
 }
 
 resource "aws_sqs_queue" "default" {
@@ -21,4 +24,28 @@ resource "aws_sqs_queue" "default" {
   deduplication_scope               = var.deduplication_scope
   fifo_throughput_limit             = var.fifo_throughput_limit
   tags                              = module.this.tags
+}
+
+data "aws_iam_policy_document" "default" {
+  count = local.prebuilt_policy_enabled ? 1 : 0
+
+  statement {
+    sid     = var.prebuilt_policy.sid
+    actions = var.prebuilt_policy.actions
+
+    resources = [local.sqs_queue_arn]
+
+    principals {
+      type        = var.prebuilt_policy.principals.type
+      identifiers = var.prebuilt_policy.principals.identifiers
+    }
+
+  }
+}
+
+resource "aws_sqs_queue_policy" "default" {
+  count = local.prebuilt_policy_enabled ? 1 : 0
+
+  queue_url = local.sqs_queue_url
+  policy    = one(data.aws_iam_policy_document.default[*].json)
 }

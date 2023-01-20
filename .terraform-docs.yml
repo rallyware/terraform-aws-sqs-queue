@@ -1,12 +1,30 @@
 formatter: markdown
 
+content: |-
+  # terraform-aws-sqs-queue
+  Terraform module to provision AWS SQS queue.
+
+  ## Usage
+  ```hcl
+  {{ include "examples/basic/main.tf" }}
+  ```
+  {{ .Requirements }}
+  {{ .Providers }}
+  {{ .Modules }}
+  {{ .Resources }}
+  {{ .Inputs }}
+  {{ .Outputs }}
+
 output:
   file: README.md
   mode: replace
   template: |-
     <!-- BEGIN_TF_DOCS -->
     {{ .Content }}
-    <!-- END_TF_DOCS --> 
+    <!-- END_TF_DOCS -->
+
+    ## License
+    The Apache-2.0 license
 
 sort:
   enabled: true
