@@ -95,7 +95,7 @@ variable "prebuilt_policy" {
       principals = optional(object(
         {
           type        = optional(string, "Service")
-          identifiers = optional(list(string), ["events.eu-central-1.amazonaws.com"])
+          identifiers = optional(list(string), ["events.amazonaws.com"])
         }
       ), {})
     }
