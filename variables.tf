@@ -85,3 +85,21 @@ variable "fifo_throughput_limit" {
     error_message = "Allowed values: `perQueue`, `perMessageGroupId`."
   }
 }
+
+variable "prebuilt_policy" {
+  type = object(
+    {
+      enabled = optional(bool, false)
+      sid     = optional(string, "AllowSendMessage")
+      actions = optional(list(string), ["sqs:SendMessage"])
+      principals = optional(object(
+        {
+          type        = optional(string, "Service")
+          identifiers = optional(list(string), ["events.amazonaws.com"])
+        }
+      ), {})
+    }
+  )
+  default     = {}
+  description = "A prebuilt AWS policy which will be assigned to SQS queue."
+}

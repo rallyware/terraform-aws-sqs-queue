@@ -1,29 +1,44 @@
 <!-- BEGIN_TF_DOCS -->
+# terraform-aws-sqs-queue
+Terraform module to provision AWS SQS queue.
+
+## Usage
+```hcl
+provider "aws" {
+  region = "eu-central-1"
+}
+
+module "sqs" {
+  source = "../../"
+
+  name      = "queue"
+  namespace = "rlw"
+  stage     = "dev"
+}
+```
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.0 |
-
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.0 |
-
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.51.0 |
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_this"></a> [this](#module\_this) | cloudposse/label/null | 0.25.0 |
-
 ## Resources
 
 | Name | Type |
 |------|------|
 | [aws_sqs_queue.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sqs_queue) | resource |
-
+| [aws_sqs_queue_policy.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sqs_queue_policy) | resource |
+| [aws_iam_policy_document.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -52,6 +67,7 @@
 | <a name="input_name"></a> [name](#input\_name) | ID element. Usually the component or solution name, e.g. 'app' or 'jenkins'.<br>This is the only ID element not also included as a `tag`.<br>The "name" tag is set to the full `id` string. There is no tag with the value of the `name` input. | `string` | `null` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | ID element. Usually an abbreviation of your organization name, e.g. 'eg' or 'cp', to help ensure generated IDs are globally unique | `string` | `null` | no |
 | <a name="input_policy"></a> [policy](#input\_policy) | The JSON policy for the SQS queue. | `string` | `null` | no |
+| <a name="input_prebuilt_policy"></a> [prebuilt\_policy](#input\_prebuilt\_policy) | A prebuilt AWS policy which will be assigned to SQS queue. | <pre>object(<br>    {<br>      enabled = optional(bool, false)<br>      sid     = optional(string, "AllowSendMessage")<br>      actions = optional(list(string), ["sqs:SendMessage"])<br>      principals = optional(object(<br>        {<br>          type        = optional(string, "Service")<br>          identifiers = optional(list(string), ["events.amazonaws.com"])<br>        }<br>      ), {})<br>    }<br>  )</pre> | `{}` | no |
 | <a name="input_receive_wait_time_seconds"></a> [receive\_wait\_time\_seconds](#input\_receive\_wait\_time\_seconds) | The time for which a ReceiveMessage call will wait for a message to arrive (long polling) before returning. An integer from 0 to 20 (seconds). | `number` | `0` | no |
 | <a name="input_redrive_policy"></a> [redrive\_policy](#input\_redrive\_policy) | The JSON policy to set up the Dead Letter Queue. | `string` | `null` | no |
 | <a name="input_regex_replace_chars"></a> [regex\_replace\_chars](#input\_regex\_replace\_chars) | Terraform regular expression (regex) string.<br>Characters matching the regex will be removed from the ID elements.<br>If not set, `"/[^a-zA-Z0-9-]/"` is used to remove all characters other than hyphens, letters and digits. | `string` | `null` | no |
@@ -59,7 +75,6 @@
 | <a name="input_tags"></a> [tags](#input\_tags) | Additional tags (e.g. `{'BusinessUnit': 'XYZ'}`).<br>Neither the tag keys nor the tag values will be modified by this module. | `map(string)` | `{}` | no |
 | <a name="input_tenant"></a> [tenant](#input\_tenant) | ID element \_(Rarely used, not included by default)\_. A customer identifier, indicating who this instance of a resource is for | `string` | `null` | no |
 | <a name="input_visibility_timeout_seconds"></a> [visibility\_timeout\_seconds](#input\_visibility\_timeout\_seconds) | The visibility timeout for the queue. An integer from 0 to 43200 (12 hours). | `number` | `30` | no |
-
 ## Outputs
 
 | Name | Description |
@@ -67,4 +82,7 @@
 | <a name="output_arn"></a> [arn](#output\_arn) | The ARN of the SQS queue. |
 | <a name="output_id"></a> [id](#output\_id) | The URL for the created Amazon SQS queue. |
 | <a name="output_url"></a> [url](#output\_url) | The URL for the created Amazon SQS queue. |
-<!-- END_TF_DOCS --> 
+<!-- END_TF_DOCS -->
+
+## License
+The Apache-2.0 license
